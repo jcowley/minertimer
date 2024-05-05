@@ -42,9 +42,9 @@ fi
 while true; do
     
     MINECRAFT_PIDS=$(ps aux | grep -iww "[M]inecraft" | awk '{print $2}')
-    # If Minecraft is running
-    
-    if [ -n "$MINECRAFT_PIDS" ]; then
+    ROBLOX_PIDS=$(ps aux | grep -iww "[R]oblox" | awk '{print $2}')
+    # If Minecraft or Roblox are running
+    if [ -n "$MINECRAFT_PIDS" ] || [ -n "$ROBLOX_PIDS" ]; then
         current_limit=TIME_LIMIT
         if [[ $(date +%u) -gt 5 ]]; then
             current_limit=WEEKEND_TIME_LIMIT
@@ -52,16 +52,17 @@ while true; do
         # If the time limit has been reached, kill the Minecraft process
         if ((TOTAL_PLAYED_TIME >= current_limit)); then
             echo $MINECRAFT_PIDS | xargs kill
-            echo "Minecraft has been closed after reaching the daily time limit."
-            osascript -e 'display notification "Minecraft time expired" with title "Minecraft Closed"'
+            echo $ROBLOX_PIDS | xargs kill
+            echo "Minecraft and Roblox have been closed after reaching the daily time limit."
+            osascript -e 'display notification "Minecraft and Roblox time expired" with title "Minecraft and Roblox Closed"'
             afplay /System/Library/Sounds/Glass.aiff 
         elif ((TOTAL_PLAYED_TIME >= current_limit - 300)) && [ "$DISPLAY_5_MIN_WARNING" = true ]; then
-            osascript -e 'display notification "Minecraft will exit in 5 minutes" with title "Minecraft Time Expiring Soon"'
-            say "Minecraft time will expire in 5 minutes"
+            osascript -e 'display notification "Minecraft and Roblox will exit in 5 minutes" with title "Time Expiring Soon"'
+            say "Minecraft and Roblox time will expire in 5 minutes"
             DISPLAY_5_MIN_WARNING=false
         elif ((TOTAL_PLAYED_TIME >= current_limit - 60)) && [ "$DISPLAY_1_MIN_WARNING" = true ]; then
-            osascript -e 'display notification "Minecraft will exit in 1 minute" with title "Minecraft Time Expiring"'
-            say "Minecraft time will expire in 1 minute"
+            osascript -e 'display notification "Minecraft and Roblox will exit in 1 minute" with title "Time Expiring"'
+            say "Minecraft and Roblox time will expire in 1 minute"
             DISPLAY_1_MIN_WARNING=false
         fi
         
